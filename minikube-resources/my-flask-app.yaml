@@ -1,0 +1,154 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: test
+type: kubernetes.io/basic-auth
+stringData:
+  password: "password"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-data
+  namespace: test
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-data-disk
+  namespace: test
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:8.0.39
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: MYSQL_DATABASE
+          value: flask
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-initdb
+        configMap:
+          name: mysql-initdb-config
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mysql-data-disk
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+  namespace: test
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS flask;
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: test
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask-app
+        image: "victorcardonaf/my-flask-app:1.1"
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app
+  namespace: test
+spec:
+  ports:
+  - port: 5000
+  selector:
+    app: flask-app

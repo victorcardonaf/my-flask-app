@@ -1,0 +1,12 @@
+flask
+boto3
+botocore
+setuptools
+decorator
+Flask-MySQLdb
+Flask-Paranoid
+Flask-Principal
+Flask-Security
+Flask-SQLAlchemy
+Flask-WTF
+yq
