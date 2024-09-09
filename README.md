@@ -11,7 +11,7 @@ You can deploy the app in diferent ways:
 ## 1. Deploy it using docker locally  ##
 It was tested in `Docker version 26.1.1` running in Mac.<br/>
 You need to install docker Desktop in your local machine.
-To deploy it locally in docker just clone the repo and go to the directory where the repo was cloned. Once there and execute these commands in sequence:
+To deploy it locally in docker just clone the repo and go to the directory where the repo was cloned. Once located there, execute these commands in sequence:
 
 ```
 $ docker build -t my-flask-app .
@@ -43,11 +43,9 @@ It was tested in `minikube version: v1.33.1` running in Mac.<br/>
 First, please ensure that you have minikube installed in your local machine.
 Please check requirements and how to install it based on your OS.
 
-Check this link ----> https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download
-To deploy it locally in docker just clone the repo and go to the directory where the repo was cloned. Once there:
-
-After installing it, please take into account that you need some minikube config before start related to resources allocation
-and allow minikube to access to resources (It can change based on OS):
+Check this link ----> https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download <br/>
+After installing it, please take into account that you need some minikube config before starting related to resources allocation
+and allow minikube to access to internal and external resources (It can change based on OS):
 ```
 $ minikube config set cpus 4
 $ minikube config set memory 8200
@@ -61,13 +59,16 @@ $ minikube start --image-repository=auto --vm-driver=docker
 ```
 
 
-To deploy the resources in minikube. Go to folder where resources are stored:
+To deploy the resources in minikube, go to the folder where resources are stored:
 ```
 $ cd minikube-resources
 $ kubectl apply -f my-flask-app.yaml
 ```
 
-The app is installed in namespace `test`. To check pods running:
+NOTE: kubectl is part of minikube installation. If it is not included, just install it 
+from this link --->  https://kubernetes.io/docs/tasks/tools/
+
+The flask-app is installed in namespace `test`. To check pods running:
 ```
 $ kubectl get pods -n test 
 ```
