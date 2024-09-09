@@ -13,6 +13,9 @@
     <div class="card" style="width:600px">
     <div class="card-body">
       <table class="table table-striped table-hover table-bordered table-sm bg-white text-center">
+        {% if name %}
+        <label for="text" class="text-center">Hello <b>{{name}}!</b></label>
+        {% endif %}
         <thead>
           <tr>
             <th colspan="3" class="text-center">Pizzas Order</th>
@@ -42,7 +45,18 @@
 <div class="center">
     <div class="card" style="width:600px">
     <div class="card-body">
-      <form action="{{url_for('index')}}">
+      <form action="{{url_for('kill_session')}}">
+              <button class="btn btn-primary btn-block">
+        Log off session
+      </button>
+      </form>
+    </div>
+    </div>
+</div>
+<div class="center">
+    <div class="card" style="width:600px">
+    <div class="card-body">
+      <form action="{{url_for('pizzas_order_form')}}">
               <button class="btn btn-primary btn-block">
         Go to Order Form
       </button>

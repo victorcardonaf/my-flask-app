@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<style>
+.center {
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+}
+</style>
+
+<div class="center">
+    <div class="card" style="width:600px">
+    <div class="card-body">
+      {% with messages = get_flashed_messages()  %}
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    <form action="{{url_for('add_pizza')}}" method="POST">
+          <div class="form-group col-md-8">
+            <label for="language">Please select your pizza:</label>
+            <select class="custom-select mr-sm-" id="pizza2" name="pizza" required>
+                <option></option>
+                <option value="margherita">Margherita</option>
+                <option value="pepperoni">Pepperoni</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="cheese">Cheese</option>
+                <option value="meat">Meat</option>
+                <option value="chicken">Chicken</option>
+                <option value="BBQ chicken">BBQ Chicken</option>
+                <option value="hawaiian">Hawaiian</option>
+                <option value="buffalo">Buffalo</option>
+              </select>
+          </div>
+          <div class="form-group">
+            <label for="text">Add additional comments</label>
+            <input type="text" class="form-control" required="required" name="description" placeholder="description">
+          </div>
+      <button class="btn btn-primary btn-block">
+        Save
+      </button>
+    </form>
+    </div>
+  </div>
+</div>
+<p></p>
+<p></p>
+<p></p>
+<div class="center">
+    <div class="card" style="width:600px">
+    <div class="card-body">
+      <form action="{{url_for('index')}}">
+              <button class="btn btn-primary btn-block">
+        Go to main menu
+      </button>
+      </form>
+    </div>
+    </div>
+</div>
+
+{% endblock %}

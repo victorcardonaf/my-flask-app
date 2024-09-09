@@ -10,3 +10,4 @@ Flask-Security
 Flask-SQLAlchemy
 Flask-WTF
 yq
+python-dotenv
