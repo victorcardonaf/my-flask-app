@@ -14,16 +14,16 @@ You need to install docker Desktop in your local machine.
 To deploy it locally in docker just clone the repo and go to the directory where the repo was cloned. Once located there, execute these commands in sequence:
 
 ```
-$ docker build -t my-flask-app .
+docker build -t my-flask-app .
 ```
 ```
-$ docker network create my-flask-app-network
+docker network create my-flask-app-network
 ```
 ```
-$ docker run --name mysql --net my-flask-app-network -e MYSQL_PASSWORD="password" -e MYSQL_DATABASE="flask" -e MYSQL_ROOT_PASSWORD="password"  -ti -d mysql:8.0.39
+docker run --name mysql --net my-flask-app-network -e MYSQL_PASSWORD="password" -e MYSQL_DATABASE="flask" -e MYSQL_ROOT_PASSWORD="password"  -ti -d mysql:8.0.39
 ```
 ```
-$ docker run --name my-flask-app --net my-flask-app-network -p 5000:5000 -ti -d my-flask-app
+docker run --name my-flask-app --net my-flask-app-network -p 5000:5000 -ti -d my-flask-app
 ```
 
 ## 2. Deploy it using docker-compose ##
@@ -32,10 +32,10 @@ You need to install docker-compose in your local machine.
 To deploy it locally using docker-compose just clone the repo and go to the directory where the repo was cloned. Once there:
 
 ```
-$ docker-compose build
+docker-compose build
 ```
 ```
-$ docker-compose up -d
+docker-compose up -d
 ```
 
 ## 3. Deploy it using minikube ##
@@ -47,22 +47,22 @@ Check this link ----> https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx
 After installing it, please take into account that you need some minikube config before starting related to resources allocation
 and allow minikube to access to internal and external resources (It can change based on OS):
 ```
-$ minikube config set cpus 4
-$ minikube config set memory 8200
-$ minikube config set driver docker
+minikube config set cpus 4
+minikube config set memory 8200
+minikube config set driver docker
 ```
 
 To initiate minikube (It can change based on OS):
 ```
-$ export HTTP_PROXY=https://minikube.sigs.k8s.io/docs/reference/networking/proxy/
-$ minikube start --image-repository=auto --vm-driver=docker
+export HTTP_PROXY=https://minikube.sigs.k8s.io/docs/reference/networking/proxy/
+minikube start --image-repository=auto --vm-driver=docker
 ```
 
 
 To deploy the resources in minikube, go to the folder where resources are stored:
 ```
-$ cd minikube-resources
-$ kubectl apply -f my-flask-app.yaml
+cd minikube-resources
+kubectl apply -f my-flask-app.yaml
 ```
 
 NOTE: kubectl is part of minikube installation. If it is not included, just install it 
@@ -70,17 +70,17 @@ from this link --->  https://kubernetes.io/docs/tasks/tools/
 
 The flask-app is installed in namespace `test`. To check pods running:
 ```
-$ kubectl get pods -n test 
+kubectl get pods -n test 
 ```
 
 Once the pods are in status running, let's obtain flask pod name:
 ```
-$ flask_pod_name=$(kubectl get pods -n test | grep flask | awk '{print $1}')
+flask_pod_name=$(kubectl get pods -n test | grep flask | awk '{print $1}')
 ```
 
 Execute port-forward to open app port and access it via web browser:
 ```
-$ kubectl port-forward $flask_pod_name 5000:5000 -n test
+kubectl port-forward $flask_pod_name 5000:5000 -n test
 ```
 
 You should see the command line output of this way:
