@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: helm-chart
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      app: helm-chart
+  serviceName: helm-chart
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: helm-chart
+    spec:
+      containers:
+      - image: helm-chart:8.0.39
+        name: helm-chart
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: helm-chart-secret
+              key: password
+        - name: MYSQL_DATABASE
+          value: flask
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: helm-chart
+        volumeMounts:
+        - name: helm-chart-data
+          mountPath: /var/lib/helm-chart
+        - name: helm-chart-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: helm-chart-initdb
+        configMap:
+          name: helm-chart-initdb-config
+  volumeClaimTemplates:
+  - metadata:
+      name: helm-chart-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helm-chart-initdb-config
+  namespace: test
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS flask;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helm-chart
+  namespace: test
+spec:
+  ports:
+  - port: 3306
+  clusterIP: None
+  selector:
+    app: helm-chart

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: my-helm-chart
+description: A Helm chart for MySQL StatefulSet and Flask Deployment
+version: 0.1.0

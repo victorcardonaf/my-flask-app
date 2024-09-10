@@ -1,0 +1,19 @@
+namespace: test
+
+mysql:
+  rootPassword: password
+  database: flask
+  user: user
+  password: password
+  storage: 20Gi
+  image: mysql:8.0.39
+  replicas: 1
+  servicePort: 3306
+  pvPath: /mnt/data
+
+flaskApp:
+  image: victorcardonaf/my-flask-app:1.4
+  replicas: 1
+  servicePort: 5000
+  cpuLimit: "500m"
+  memoryLimit: "128Mi"
