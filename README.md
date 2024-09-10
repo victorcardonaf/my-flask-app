@@ -4,11 +4,27 @@ This project creates an app using flask and mysql.
 It is just for testing purposes. Please take into account that passwords cannot be 
 exposed in code.
 
-## How to deploy app  ##
+## How to deploy flask app  ##
 
-You can deploy the app in diferent ways:
+Each one of the steps below allow you to deploy this flask app. To access the app once the configuration is done,
+access it via web browser
+
+ http://localhost:5000  or http://127.0.0.1:5000 
+
+To access to the **admin page in flask app**, please use these values:
+
+![image](images/admin-access.png)
+
+```
+userid: 1000
+password: admin
+```
+
+
+### You can deploy the app in different ways: ###
 
 ## 1. Deploy it using docker locally  ##
+
 It was tested in `Docker version 26.1.1` running in Mac.<br/>
 You need to install docker Desktop in your local machine.
 To deploy it locally in docker just clone the repo and go to the directory where the repo was cloned. Once located there, execute these commands in sequence:
@@ -26,6 +42,7 @@ docker run --name mysql --net my-flask-app-network -e MYSQL_PASSWORD="password" 
 docker run --name my-flask-app --net my-flask-app-network -p 5000:5000 -ti -d my-flask-app
 ```
 
+
 ## 2. Deploy it using docker-compose ##
 It was tested in `Docker Compose version v2.27.0-desktop.2` running in Mac.<br/>
 You need to install docker-compose in your local machine.
@@ -37,6 +54,7 @@ docker-compose build
 ```
 docker-compose up -d
 ```
+
 
 ## 3. Deploy it using minikube ##
 It was tested in `minikube version: v1.33.1` running in Mac.<br/>
@@ -90,4 +108,4 @@ Just access the app via web browser in localhost:5000
 ![image](images/app-running.png)
 
 Enjoy!
-# flask-app-python
+### flask-app-python ###
