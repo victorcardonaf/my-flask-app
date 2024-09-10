@@ -1,20 +1,27 @@
 services:
     flask-app:
-        build: .
-        ports:
-          - "5000:5000"
+      build: .
+      ports:
+        - "5000:5000"
+      depends_on:
+        mysql:
+          condition: service_healthy
 
     mysql:
-     image: mysql:8.0.39
-     volumes:
-       - db_data:/var/lib/mysql:rw
-       - ./db-init:/docker-entrypoint-initdb.d/:rw
-     restart: always
-     environment:
-       MYSQL_ROOT_PASSWORD: password
-       MYSQL_DATABASE: flask
-       MYSQL_USER: user
-       MYSQL_PASSWORD: password
+      ports:
+        - "3306:3306"
+      image: mysql:8.0.39
+      volumes:
+        - db_data:/var/lib/mysql:rw
+        - ./db-init:/docker-entrypoint-initdb.d/:rw
+      restart: always
+      healthcheck:
+        test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      environment:
+        MYSQL_ROOT_PASSWORD: password
+        MYSQL_DATABASE: flask
+        MYSQL_USER: user
+        MYSQL_PASSWORD: password
 
 volumes:
     db_data:

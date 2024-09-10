@@ -36,12 +36,19 @@ docker build -t my-flask-app .
 docker network create my-flask-app-network
 ```
 ```
-docker run --name mysql --net my-flask-app-network -e MYSQL_PASSWORD="password" -e MYSQL_DATABASE="flask" -e MYSQL_ROOT_PASSWORD="password"  -ti -d mysql:8.0.39
+docker run --name mysql -p 3306:3306 --net my-flask-app-network -e MYSQL_PASSWORD="password" -e MYSQL_DATABASE="flask" -e MYSQL_ROOT_PASSWORD="password"  -ti -d mysql:8.0.39
 ```
 ```
 docker run --name my-flask-app --net my-flask-app-network -p 5000:5000 -ti -d my-flask-app
 ```
+Check that containers are up and running.dock
 
+```
+docker ps
+```
+
+
+Access it via web browser http://localhost:5000  or http://127.0.0.1:5000
 
 ## 2. Deploy it using docker-compose ##
 It was tested in `Docker Compose version v2.27.0-desktop.2` running in Mac.<br/>
