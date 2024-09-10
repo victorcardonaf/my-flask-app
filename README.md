@@ -41,7 +41,7 @@ docker run --name mysql -p 3306:3306 --net my-flask-app-network -e MYSQL_PASSWOR
 ```
 docker run --name my-flask-app --net my-flask-app-network -p 5000:5000 -ti -d my-flask-app
 ```
-Check that containers are up and running.dock
+Check that containers are up and running:
 
 ```
 docker ps
