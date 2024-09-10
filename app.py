@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 # app config
 # locally
-#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_HOST'] = "127.0.0.1"
 
 app.config['MYSQL_HOST'] = 'mysql'
 app.config['MYSQL_USER'] = db_user
@@ -78,17 +78,18 @@ def kill_session():
 @app.route('/add_pizza', methods=["POST"])
 def add_pizza():
     if request.method == 'POST':
-        pizza = request.form['pizza']
+        pizza_name = request.form['pizza']
         description = request.form['description']
         try:
             cur = mysql.connection.cursor()
-            cur.execute('INSERT INTO pizza (name, description) VALUES (%s, %s)', (pizza, description))
+            cur.execute('INSERT INTO pizza (pizza_name, description) VALUES (%s, %s)', (pizza_name, description))
             mysql.connection.commit()
             flash('Pizza order added successfully')
             return redirect(url_for('pizzas_order_form'))
         except Exception as e:
             print(e)
             return redirect(url_for('index'))
+
 
 @app.route('/pizza_orders/<name>', methods=['GET', 'POST'])
 def pizza_orders(name):
@@ -107,9 +108,9 @@ def create_tables():
         cur = mysql.connection.cursor()
 
         # Create pizza table
-        sql_pizza_table='''CREATE TABLE IF NOT EXISTS pizza(
+        sql_pizza_table='''CREATE TABLE IF NOT EXISTS pizza (
         order_id INT NOT NULL AUTO_INCREMENT,
-        name varchar(255) NOT NULL,
+        pizza_name varchar(255) NOT NULL,
         description varchar(255) NOT NULL,
         PRIMARY KEY(`order_id`)
         )'''
