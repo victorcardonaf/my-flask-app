@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.flaskApp.replicas }}
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+      - name: flask-app
+        image: "{{ .Values.flaskApp.image }}"
+        resources:
+          limits:
+            memory: "{{ .Values.flaskApp.memoryLimit }}"
+            cpu: "{{ .Values.flaskApp.cpuLimit }}"
+        ports:
+        - containerPort: {{ .Values.flaskApp.servicePort }}

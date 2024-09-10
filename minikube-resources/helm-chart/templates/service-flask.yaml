@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+  - port: {{ .Values.flaskApp.servicePort }}
+  selector:
+    app: flask-app
