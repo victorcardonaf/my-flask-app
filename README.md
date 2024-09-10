@@ -84,14 +84,36 @@ minikube start --image-repository=auto --vm-driver=docker
 ```
 
 
-To deploy the resources in minikube, go to the folder where resources are stored:
+To deploy the resources in minikube, go to the folder where resources are stored.
+It was tested using helm `version.BuildInfo{Version:"v3.15.4"`
+
+Go to folder:
 ```
 cd minikube-resources
+```
+
+Create namespace first
+```
+kubectl apply -f 1-namespace.yaml
+```
+
+Deploy using helm charts
+```
+helm install flask-app helm-chart --namespace test
+```
+
+If for some reason you have issues, deploy it of this way:
+```
 kubectl apply -f my-flask-app.yaml
 ```
 
-NOTE: kubectl is part of minikube installation. If it is not included, just install it 
-from this link --->  https://kubernetes.io/docs/tasks/tools/
+NOTE: kubectl and helm are part of minikube installation. If it is not included, just install it 
+from this link 
+
+
+kubectl --->  https://kubernetes.io/docs/tasks/tools/
+
+helm ---> https://helm.sh/docs/intro/install/
 
 The flask-app is installed in namespace `test`. To check pods running:
 ```
@@ -108,11 +130,19 @@ Execute port-forward to open app port and access it via web browser:
 kubectl port-forward $flask_pod_name 5000:5000 -n test
 ```
 
+
 You should see the command line output of this way:
 ![image](images/port-forward.png)
 
 Just access the app via web browser in localhost:5000
 ![image](images/app-running.png)
+
+
+To uninstall all the resources in minikube:
+```
+helm uninstall flask-app --namespace test
+kubectl delete -f 1-namespace.yaml
+```
 
 Enjoy!
 ### flask-app-python ###
