@@ -1,8 +1,5 @@
-import os
-
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_mysqldb import MySQL
-import secrets
 from dotenv import load_dotenv
 import os
 
@@ -38,22 +35,25 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == 'POST':
 
-        userid = int(request.form['userid'])
-        password = request.form['password']
+        session["userid"] = int(request.form.get("userid"))
+        session["password"] = request.form.get("password")
+
         cur = mysql.connection.cursor()
-        cur.execute('SELECT fullname FROM admin_users WHERE (user_id = %s AND password = %s)', (int(userid), password))
-        fullname = cur.fetchall()
-        if len(fullname) == 0:
+        cur.execute('SELECT fullname FROM admin_users WHERE (user_id = %s AND password = %s)', (int(session['userid']), session['password']))
+
+        session["fullname"] = cur.fetchall()
+        if len(session["fullname"]) == 0:
             flash('An user with this user id and password is not found in the DB')
+            session.pop('userid', default=None)
             return redirect(url_for('users_login'))
         else:
-            session['logged_in'] = True
-            return redirect(url_for('pizza_orders', name = fullname[0][0]))
+            return redirect(url_for('pizza_orders', name = session["fullname"][0][0]))
 
+    # return redirect(url_for('users_login'))
 
 @app.route('/pizzas_order_form')
 def pizzas_order_form():
@@ -61,12 +61,17 @@ def pizzas_order_form():
 
 @app.route('/users_login')
 def users_login():
-    return render_template("users-login.html")
+    if not session.get("userid"):
+        return render_template("users-login.html")
+    else:
+        return redirect(url_for('pizza_orders', name = session["fullname"][0][0]))
 
 @app.route('/kill_session')
 def kill_session():
     # Clear stored in the session object
-    session.pop('logged_in', default=None)
+    session.pop('userid', default=None)
+    session.pop('password', default=None)
+
     return render_template("users-login.html")
 
 
@@ -75,7 +80,6 @@ def add_pizza():
     if request.method == 'POST':
         pizza = request.form['pizza']
         description = request.form['description']
-        print(pizza, description)
         try:
             cur = mysql.connection.cursor()
             cur.execute('INSERT INTO pizza (name, description) VALUES (%s, %s)', (pizza, description))
@@ -83,12 +87,13 @@ def add_pizza():
             flash('Pizza order added successfully')
             return redirect(url_for('pizzas_order_form'))
         except Exception as e:
+            print(e)
             return redirect(url_for('index'))
 
 @app.route('/pizza_orders/<name>', methods=['GET', 'POST'])
 def pizza_orders(name):
 
-    if 'logged_in' not in session:
+    if not session.get("userid"):
         return render_template("users-login.html")
     else:
         cur = mysql.connection.cursor()
@@ -109,6 +114,8 @@ def create_tables():
         PRIMARY KEY(`order_id`)
         )'''
         cur.execute(sql_pizza_table)
+
+        mysql.connection.commit()
 
         # Start in 1000
         start_index_sql ='''ALTER TABLE pizza AUTO_INCREMENT = 1000'''
